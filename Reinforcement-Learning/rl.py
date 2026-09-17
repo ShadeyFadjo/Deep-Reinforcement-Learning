@@ -17,3 +17,7 @@ maze = np.array([
 
 start = (0, 0)
 goal = (9, 9)
+
+print(start)
+print(goal)
+print(maze)
