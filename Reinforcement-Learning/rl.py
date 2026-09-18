@@ -86,6 +86,50 @@ def plot_rewards(rewards):
     plt.grid(True)
     plt.show()
 
+def animate_path(path):
+    plt.figure(figsize=(8, 8))
+
+    cmap = ListedColormap(['#eef8ea', '#a8c79c'])
+    plt.imshow(maze, cmap=cmap)
+
+    # Goal
+    plt.scatter(
+        goal[1], goal[0],
+        marker='*',
+        color='#388e3c',
+        edgecolors='black',
+        s=300,
+        zorder=5
+    )
+
+    robot, = plt.plot(
+        start[1], start[0],
+        marker='o',
+        color='#81c784',
+        markeredgecolor='black',
+        markersize=15,
+        zorder=6
+    )
+
+    plt.xticks(range(maze.shape[1]))
+    plt.yticks(range(maze.shape[0]))
+    plt.grid(True, alpha=0.2)
+
+    plt.title("Q-Learning — Robot Maze Navigation")
+
+    for step, state in enumerate(path):
+
+        robot.set_data([state[1]], [state[0]])
+
+        plt.title(
+            f"Q-Learning — Step {step}/{len(path)-1}\n"
+            f"Position : {state}"
+        )
+
+        plt.pause(0.6)
+
+    plt.show()
+
 # maze = np.array([
 #     [0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 #     [0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
@@ -173,6 +217,13 @@ for episode in range(num_episodes):
         Q[state][action_index] = old_value + alpha * \
             (reward + gamma * next_max - old_value)
 
+        print(f"State : {state}")
+        print(f"Action : {action}")
+        print(f"Reward : {reward}")
+        print(f"Old Q-value : {old_value}")
+        print(f"New Q-value : {Q[state][action_index]}")
+        print("-------------------------")
+
         state = next_state
         total_rewards += reward
 
@@ -181,6 +232,8 @@ for episode in range(num_episodes):
     rewards_all_episodes.append(total_rewards)
 
 optimal_path = get_optimal_path(Q, start, goal, actions, maze)
+
+print(Q)
 
 # test
 
@@ -191,7 +244,8 @@ for i, state in enumerate(optimal_path):
 
 # test
 
-plot_maze_with_path(optimal_path)
+# plot_maze_with_path(optimal_path)
+animate_path(optimal_path)
 plot_rewards(rewards_all_episodes)
 
 
